@@ -1,5 +1,5 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
-import { ATLAS_URI } from "./config";
+import { ATLAS_URI } from "./config.js";
 
 let _db: any = null;
 
@@ -14,22 +14,26 @@ export async function connectDB() {
   }
 
   // ---- 2. Create client ----
+
   const client = new MongoClient(ATLAS_URI, {
     serverApi: {
       version: ServerApiVersion.v1,
       strict: true,
       deprecationErrors: true,
     },
+    tls: true, // Force TLS
+    tlsAllowInvalidCertificates: true, // Only for dev/test environments
   });
+
 
   try {
     // ---- 3. Connect + ping ----
     await client.connect();
-    await client.db("admin").command({ ping: 1 });
+    await client.db("Remit").command({ ping: 1 });
     console.log("Connected to MongoDB Atlas");
 
     // ---- 4. Set DB and export ----
-    _db = client.db("Wearable");
+    _db = client.db("Remit");
     return _db;
   } catch (err) {
     console.error("MongoDB connection failed:", err);
